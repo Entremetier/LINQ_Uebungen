@@ -43,7 +43,7 @@ namespace LINQ_Uebungen
             //Produkte mit "o" ausgeben
             Console.WriteLine("Produkte mit \"o\":");
             var produkteMitO = from prod in product
-                               where prod.ProductName.Contains("o") || prod.ProductName.Contains("O")
+                               where prod.ProductName.ToLower().Contains("o")
                                select prod;
 
             foreach (var item in produkteMitO)
@@ -53,7 +53,7 @@ namespace LINQ_Uebungen
             Console.WriteLine();
 
             var produkteMitO2 = product
-                .Where(p => p.ProductName.Contains("o") || p.ProductName.Contains("O"));
+                .Where(p => p.ProductName.ToLower().Contains("o"));
 
 
             foreach (var item in produkteMitO2)
@@ -63,7 +63,50 @@ namespace LINQ_Uebungen
             Console.WriteLine();
 
 
-            //
+            //Anzahl Bestellungen je Kunde aus Deutschland
+            var kundenUndBestellungen = from cust in customers
+                                        where cust.Country == "Germany"
+                                        select new { cust.CustomerID, cust.Orders.Count };
+
+            foreach (var item in kundenUndBestellungen)
+            {
+                Console.WriteLine(item);
+            }
+
+            var kundenUndBestellungen2 = customers
+                .Where(c => c.Country == "Germany")
+                .Select(c => new { c.CustomerID, AnzahlBestellungen = c.Orders.Count });
+
+            foreach (var item in kundenUndBestellungen2)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+
+            //Alle Bestellungen abfragen
+            var alleBestellungen = from cust in customers
+                                   from ord in cust.Orders
+                                   select ord;
+
+            foreach (var item in alleBestellungen)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+            var alleBestellungen2 = customers
+                .SelectMany(c => c.Orders);
+
+            foreach (var item in alleBestellungen2)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+
+
+
 
             Console.ReadKey();
         }
