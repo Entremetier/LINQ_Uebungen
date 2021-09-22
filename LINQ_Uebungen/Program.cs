@@ -106,7 +106,53 @@ namespace LINQ_Uebungen
 
 
 
+            //Anzahl der Produkte
+            var anzahl = (from n in product
+                          select n)
+                          .Count();
+            Console.WriteLine("Anzahl aller Produkte: " + anzahl);
 
+            Console.WriteLine("Anzahl aller Produkte: " + product.Count());
+            Console.WriteLine();
+
+
+
+            //Anzahl der Produkte mit x
+            var anzahlMitX = (from n in product
+                              where n.ProductName.ToLower().Contains("x")
+                              select n)
+                              .Count();
+            Console.WriteLine("Anzahl aller Produkte: " + anzahlMitX);
+
+            Console.WriteLine("Anzahl aller Produkte: " + product.Where(n => n.ProductName.ToLower().Contains("x")).Count());
+            Console.WriteLine();
+
+
+            //Das teuerste und billigste Produkt ausgeben
+
+            var billigstesProd = (from p in product
+                                  select p.UnitPrice)
+                                  .Min();
+
+            Console.WriteLine("Billigstes Produkt: " + billigstesProd);
+            Console.WriteLine("Billigstes Produkt: " + product.Min(p => p.UnitPrice));
+            Console.WriteLine();
+
+            var teuerstesProd = (from p in product
+                                  select p.UnitPrice)
+                                  .Max();
+
+            Console.WriteLine("Teuerstes Produkt: " + teuerstesProd);
+            Console.WriteLine("Teuerstes Produkt: " + product.Max(p => p.UnitPrice));
+
+
+            //Durchschnittspreis aller Produkte
+            var averagePrice = (from p in product
+                                select p.UnitPrice)
+                               .Average();
+
+            Console.WriteLine("Durchschnittspreis aller Produkte: " + averagePrice);
+            Console.WriteLine("Durchschnittspreis aller Produkte: " + product.Average(p => p.UnitPrice));
 
             Console.ReadKey();
         }
