@@ -110,9 +110,9 @@ namespace LINQ_Uebungen
             var anzahl = (from n in product
                           select n)
                           .Count();
-            Console.WriteLine("Anzahl aller Produkte: " + anzahl);
+            Console.WriteLine("Anzahl aller Produkte (Abfragesyntax): " + anzahl);
 
-            Console.WriteLine("Anzahl aller Produkte: " + product.Count());
+            Console.WriteLine("Anzahl aller Produkte (Methodensyntax): " + product.Count());
             Console.WriteLine();
 
 
@@ -122,9 +122,9 @@ namespace LINQ_Uebungen
                               where n.ProductName.ToLower().Contains("x")
                               select n)
                               .Count();
-            Console.WriteLine("Anzahl aller Produkte: " + anzahlMitX);
+            Console.WriteLine("Anzahl aller Produkte (Abfragesyntax): " + anzahlMitX);
 
-            Console.WriteLine("Anzahl aller Produkte: " + product.Where(n => n.ProductName.ToLower().Contains("x")).Count());
+            Console.WriteLine("Anzahl aller Produkte (Methodensyntax): " + product.Where(n => n.ProductName.ToLower().Contains("x")).Count());
             Console.WriteLine();
 
 
@@ -134,16 +134,16 @@ namespace LINQ_Uebungen
                                   select p.UnitPrice)
                                   .Min();
 
-            Console.WriteLine("Billigstes Produkt: " + billigstesProd);
-            Console.WriteLine("Billigstes Produkt: " + product.Min(p => p.UnitPrice));
+            Console.WriteLine("Billigstes Produkt (Abfragesyntax): " + billigstesProd);
+            Console.WriteLine("Billigstes Produkt (Methodensyntax): " + product.Min(p => p.UnitPrice));
             Console.WriteLine();
 
             var teuerstesProd = (from p in product
-                                  select p.UnitPrice)
+                                 select p.UnitPrice)
                                   .Max();
 
-            Console.WriteLine("Teuerstes Produkt: " + teuerstesProd);
-            Console.WriteLine("Teuerstes Produkt: " + product.Max(p => p.UnitPrice));
+            Console.WriteLine("Teuerstes Produkt (Abfragesyntax): " + teuerstesProd);
+            Console.WriteLine("Teuerstes Produkt (Methodensyntax): " + product.Max(p => p.UnitPrice));
 
 
             //Durchschnittspreis aller Produkte
@@ -151,8 +151,107 @@ namespace LINQ_Uebungen
                                 select p.UnitPrice)
                                .Average();
 
-            Console.WriteLine("Durchschnittspreis aller Produkte: " + averagePrice);
-            Console.WriteLine("Durchschnittspreis aller Produkte: " + product.Average(p => p.UnitPrice));
+            Console.WriteLine("Durchschnittspreis aller Produkte (Abfragesyntax): " + averagePrice);
+            Console.WriteLine("Durchschnittspreis aller Produkte (Methodensyntax): " + product.Average(p => p.UnitPrice));
+
+
+            //Erstes Produkt das mehr als 50€ kostet
+            var prodMehr50 = (from n in product
+                              where n.UnitPrice > 50
+                              select n)
+                              .FirstOrDefault();
+
+            Console.WriteLine("\nErstes Produkt das mehr als 50€ kostet (Abfragesyntax): " + prodMehr50);
+
+
+            //Erstes Produkt das mehr als 50€ kostet
+            var prodMehr40 = (from n in product
+                              where n.UnitPrice > 40
+                              select n)
+                              .FirstOrDefault();
+
+            Console.WriteLine("\nErstes Produkt das mehr als 50€ kostet (Abfragesyntax):\n" + prodMehr40);
+
+
+            Console.WriteLine("\nErstes Produkt das mehr als 50€ kostet (Methodensyntax): "
+                + product.FirstOrDefault(p => p.UnitPrice > 50));
+
+            Console.WriteLine("\nErstes Produkt das mehr als 40€ kostet (Methodensyntax):\n" +
+                product.FirstOrDefault(p => p.UnitPrice > 40));
+
+
+            //Einziges Produkt das mehr als 50€ kostet
+            var prodMehr50A = (from n in product
+                               where n.UnitPrice > 50
+                               select n)
+                               .SingleOrDefault();
+            Console.WriteLine("\nEinziges Produkt das mehr als 50€ kostet (Abfragesyntax): " + prodMehr50A);
+
+
+            //Einzige Product das mehr als 45€ kostet
+            var prodMehr45A = (from n in product
+                               where n.UnitPrice > 45
+                               select n)
+                               .SingleOrDefault();
+
+            Console.WriteLine("\nEinziges Produkt das mehr als 45€ kostet: (Abfragesyntax)\n" + prodMehr45A);
+
+            Console.WriteLine("\nEinziges Produkt das mehr als 50€ kostet (Methodensyntax):\n"
+                + product.SingleOrDefault(p => p.UnitPrice > 50));
+
+            Console.WriteLine("\nEinziges Produkt das mehr als 45€ kostet (Methodensyntax):\n"
+                + product.SingleOrDefault(p => p.UnitPrice > 45));
+
+
+            //Exception für das Produkt das mehr als 40€ kostet
+            //var prodMehr40A = (from n in product
+            //                   where n.UnitPrice > 40
+            //                   select n)
+            //                   .SingleOrDefault();
+
+            //Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet:\n" + prodMehr40A);
+
+            //Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet (Methodensyntax):\n"
+            //   + product.SingleOrDefault(p => p.UnitPrice > 40));
+
+
+            //Liste mit Großbuchstaben
+            var liste = (from p in product
+                         select new { ID = p.ProductID, ProductName = p.ProductName.ToUpper(), p.UnitPrice })
+                         .ToList();
+
+            // ODER aber nicht der Standard (besser den anonymen Typen verwenden)
+
+            List<Product> prodListe = (from p in product
+                         select new Product( p.ProductID, p.ProductName.ToUpper(), p.UnitPrice ))
+                         .ToList();
+
+            liste.Add(new { ID = 57, ProductName = "Ravioli Angelo", UnitPrice = 19.50 });
+            liste.Add(new { ID = 75, ProductName = "Rhönbräu Klosterbier", UnitPrice = 7.75 });
+
+            Console.WriteLine("Liste (Abfragesyntax):");
+            foreach (var item in liste)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+            var liste2 = product
+                .Select(p => new { ID = p.ProductID, ProductName = p.ProductName.ToUpper(), p.UnitPrice }).ToList();
+
+            liste2.Add(new { ID = 57, ProductName = "Ravioli Angelo", UnitPrice = 19.50 });
+            liste2.Add(new { ID = 75, ProductName = "Rhönbräu Klosterbier", UnitPrice = 7.75 });
+
+            Console.WriteLine("Liste (Methodensyntax):");
+            foreach (var item in liste2)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+
+
+
 
             Console.ReadKey();
         }
