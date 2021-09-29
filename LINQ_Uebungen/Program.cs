@@ -84,7 +84,7 @@ namespace LINQ_Uebungen
             Console.WriteLine();
 
 
-            //Alle Bestellungen abfragen
+            // Alle Bestellungen abfragen
             var alleBestellungen = from cust in customers
                                    from ord in cust.Orders
                                    select ord;
@@ -106,7 +106,7 @@ namespace LINQ_Uebungen
 
 
 
-            //Anzahl der Produkte
+            // Anzahl der Produkte
             var anzahl = (from n in product
                           select n)
                           .Count();
@@ -117,7 +117,7 @@ namespace LINQ_Uebungen
 
 
 
-            //Anzahl der Produkte mit x
+            // Anzahl der Produkte mit x
             var anzahlMitX = (from n in product
                               where n.ProductName.ToLower().Contains("x")
                               select n)
@@ -128,7 +128,7 @@ namespace LINQ_Uebungen
             Console.WriteLine();
 
 
-            //Das teuerste und billigste Produkt ausgeben
+            // Das teuerste und billigste Produkt ausgeben
 
             var billigstesProd = (from p in product
                                   select p.UnitPrice)
@@ -146,7 +146,7 @@ namespace LINQ_Uebungen
             Console.WriteLine("Teuerstes Produkt (Methodensyntax): " + product.Max(p => p.UnitPrice));
 
 
-            //Durchschnittspreis aller Produkte
+            // Durchschnittspreis aller Produkte
             var averagePrice = (from p in product
                                 select p.UnitPrice)
                                .Average();
@@ -155,7 +155,7 @@ namespace LINQ_Uebungen
             Console.WriteLine("Durchschnittspreis aller Produkte (Methodensyntax): " + product.Average(p => p.UnitPrice));
 
 
-            //Erstes Produkt das mehr als 50€ kostet
+            // Erstes Produkt das mehr als 50€ kostet
             var prodMehr50 = (from n in product
                               where n.UnitPrice > 50
                               select n)
@@ -164,7 +164,7 @@ namespace LINQ_Uebungen
             Console.WriteLine("\nErstes Produkt das mehr als 50€ kostet (Abfragesyntax): " + prodMehr50);
 
 
-            //Erstes Produkt das mehr als 50€ kostet
+            // Erstes Produkt das mehr als 50€ kostet
             var prodMehr40 = (from n in product
                               where n.UnitPrice > 40
                               select n)
@@ -180,7 +180,7 @@ namespace LINQ_Uebungen
                 product.FirstOrDefault(p => p.UnitPrice > 40));
 
 
-            //Einziges Produkt das mehr als 50€ kostet
+            // Einziges Produkt das mehr als 50€ kostet
             var prodMehr50A = (from n in product
                                where n.UnitPrice > 50
                                select n)
@@ -188,7 +188,7 @@ namespace LINQ_Uebungen
             Console.WriteLine("\nEinziges Produkt das mehr als 50€ kostet (Abfragesyntax): " + prodMehr50A);
 
 
-            //Einzige Product das mehr als 45€ kostet
+            // Einzige Product das mehr als 45€ kostet
             var prodMehr45A = (from n in product
                                where n.UnitPrice > 45
                                select n)
@@ -203,19 +203,19 @@ namespace LINQ_Uebungen
                 + product.SingleOrDefault(p => p.UnitPrice > 45));
 
 
-            //Exception für das Produkt das mehr als 40€ kostet
-            //var prodMehr40A = (from n in product
+            // Exception für das Produkt das mehr als 40€ kostet
+            // var prodMehr40A = (from n in product
             //                   where n.UnitPrice > 40
             //                   select n)
             //                   .SingleOrDefault();
 
-            //Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet:\n" + prodMehr40A);
+            // Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet:\n" + prodMehr40A);
 
-            //Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet (Methodensyntax):\n"
+            // Console.WriteLine("\nEinziges Produkt das mehr als 40€ kostet (Methodensyntax):\n"
             //   + product.SingleOrDefault(p => p.UnitPrice > 40));
 
 
-            //Liste mit Großbuchstaben
+            // Liste mit Großbuchstaben
             var liste = (from p in product
                          select new { ID = p.ProductID, ProductName = p.ProductName.ToUpper(), p.UnitPrice })
                          .ToList();
@@ -250,8 +250,134 @@ namespace LINQ_Uebungen
             Console.WriteLine();
 
 
+            // Alle Produkte absteigend nach Preis sortiern, Abfragesyntax
+
+            Console.WriteLine("Alle Produkte absteigend nach Preis sortiern, Abfragesyntax");
+
+            var prodPriceDesc = from p in product
+                                orderby p.UnitPrice descending
+                                select p;
+
+            Console.WriteLine(string.Join("\n", prodPriceDesc));
+            Console.WriteLine();
+
+            // Alle Produkte absteigend nach Preis sortiern, Methodensyntax
+
+            Console.WriteLine("Alle Produkte absteigend nach Preis sortiern, Methodensyntax");
+
+            var prodPriceDesc2 = product
+                .OrderByDescending(p => p.UnitPrice);
+
+            Console.WriteLine(string.Join("\n", prodPriceDesc2));
+            Console.WriteLine();
+
+            // Alle Bestellungen nach Land und Datum sortiert, Abfragesyntax
+            Console.WriteLine("Alle Bestellungen nach Land und Datum sortiert, Abfragesyntax");
+
+            var ordCountryDate = from c in customers
+                                 from ord in c.Orders
+                                 orderby ord.ShipCountry, ord.OrderDate
+                                 select ord;
+
+            Console.WriteLine(string.Join("\n", ordCountryDate));
+            Console.WriteLine();
 
 
+            // Alle Bestellungen nach Land und Datum sortiert, Methodensyntax
+            Console.WriteLine("Alle Bestellungen nach Land und Datum sortiert, Methodensyntax");
+
+            var ordCountryDate2 = customers
+                .SelectMany(o => o.Orders)
+                .OrderBy(c => c.ShipCountry)
+                .ThenBy(d => d.OrderDate);
+
+            Console.WriteLine(string.Join("\n", ordCountryDate2));
+            Console.WriteLine();
+
+
+
+            // Kunden nach Land gruppiert, Abfragesyntax
+            Console.WriteLine("Kunden nach Land gruppiert, Abfragesyntax");
+
+            var custGroupByCountryA = from c in customers
+                                      orderby c.CustomerID
+                                      group c by c.Country into gr
+                                      orderby gr.Key
+                                      select gr;
+
+            foreach (var gruppe in custGroupByCountryA)
+            {
+                Console.Write(gruppe.Key + "\n");
+
+                foreach (var cust in gruppe)
+                {
+                    Console.Write("ID=" + cust.CustomerID + " CompanyName=" + cust.CompanyName + "\n");
+                }
+            }
+            Console.WriteLine();
+
+
+            // Kunden nach Land gruppiert, Methodensyntax
+            Console.WriteLine("Kunden nach Land gruppiert, Methodensyntax");
+
+            var custGroupByCountryM = customers
+                .OrderBy(c => c.CustomerID)
+                .GroupBy(c => c.Country)
+                .OrderBy(k => k.Key);
+
+
+            foreach (var gruppe in custGroupByCountryM)
+            {
+                Console.Write(gruppe.Key + "\n");
+
+                foreach (var cust in gruppe)
+                {
+                    Console.Write("ID=" + cust.CustomerID + " CompanyName=" + cust.CompanyName + "\n");
+                }
+            }
+            Console.WriteLine();
+
+
+            // Bestellungen nach Jahr gruppiert (Abfragesyntax)
+            Console.WriteLine("Bestellungen nach Jahr gruppiert (Abfragesyntax)");
+
+            var ordGroupByYearA = from c in customers
+                                  from ord in c.Orders
+                                  orderby ord.OrderDate
+                                  group ord by ord.OrderDate.Year into gr
+                                  orderby gr.Key
+                                  select gr;
+
+            foreach (var group in ordGroupByYearA)
+            {
+                Console.WriteLine(group.Key);
+                foreach (var item in group)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+            Console.WriteLine();
+
+             // Bestellungen nach Jahr gruppiert (Methodensyntax)
+             Console.WriteLine("Bestellungen nach Jahr gruppiert (Methodensyntax)");
+
+            var ordGroupByYearM = customers
+                .SelectMany(o => o.Orders)
+                .OrderBy(o => o.OrderDate)
+                .GroupBy(d => d.OrderDate.Year)
+                .OrderBy(k => k.Key);
+
+            foreach (var gruppe in ordGroupByYearM)
+            {
+                Console.WriteLine(gruppe.Key);
+
+                foreach (var item in gruppe)
+                {
+                    Console.WriteLine(item);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
 
             Console.ReadKey();
         }
