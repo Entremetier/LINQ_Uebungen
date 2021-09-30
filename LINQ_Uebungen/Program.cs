@@ -379,6 +379,98 @@ namespace LINQ_Uebungen
             }
             Console.WriteLine();
 
+
+            // Die 4 letzten Bestellungen aus Deutschland (Abfragesyntax)
+            Console.WriteLine("Die 4 letzten Bestellungen aus Deutschland (Abfragesyntax):");
+            var lastFourOrdersFromGerA = (from c in customers
+                                         from o in c.Orders
+                                         where c.Country == "Germany"
+                                         orderby o.OrderDate descending
+                                         select o)
+                                         .Take(4);
+
+            foreach (var item in lastFourOrdersFromGerA)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+
+            // Die 4 letzten Bestellungen aus Deutschland (Methodensyntax)
+            Console.WriteLine("Die 4 letzten Bestellungen aus Deutschland (Methodensyntax):");
+
+            var lastFourOrdersFromGerM = customers
+                .SelectMany(o => o.Orders)
+                .Where(c => c.ShipCountry == "Germany")
+                .OrderByDescending(r => r.OrderDate)
+                .Take(4);
+
+            foreach (var item in lastFourOrdersFromGerM)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine();
+
+
+            // Bestellungen mit Produkt-Infos (Abfragesyntax)
+            Console.WriteLine("Bestellungen mit Produkt-Infos (Abfragesyntax):");
+            var ordersWithProdInfoA = from c in customers
+                                     from o in c.Orders
+                                     from p in product
+                                     where o.ProductID == p.ProductID
+                                     orderby o.ShipCountry, p.ProductID
+                                     select new { o, p };
+
+            foreach (var item in ordersWithProdInfoA)
+            {
+                Console.WriteLine($"Order={item.o.OrderID}, Date={item.o.OrderDate.ToShortDateString()}, To={item.o.ShipCountry}, " +
+                                     $"Product-{item.p.ProductID}={item.p.ProductName} ({item.p.UnitPrice:n})");
+            }
+            Console.WriteLine();
+
+            // Bestellungen mit Produkt-Infos (Methodensyntax)
+            Console.WriteLine("Bestellungen mit Produkt-Infos (Methodensyntax):");
+            var ordersWithProdInfoM = customers
+                .SelectMany(c => c.Orders)
+                .OrderBy(o => o.ShipCountry)
+                .ThenBy(p => p.ProductID)
+                .Join
+                (
+                product, 
+                o => o.ProductID, 
+                p => p.ProductID,
+                (o, p) => new { o, p }
+                );
+
+            foreach (var item in ordersWithProdInfoM)
+            {
+                Console.WriteLine($"Order={item.o.OrderID}, Date={item.o.OrderDate.ToShortDateString()}, To={item.o.ShipCountry}, " +
+                     $"Product-{item.p.ProductID}={item.p.ProductName} ({item.p.UnitPrice:n})");
+            }
+            Console.WriteLine();
+
+
+            // Summe aller Bestellungen nach Deutschland (Abfragesyntax)
+            Console.WriteLine("Summe aller Bestellungen nach Deutschland (Abfragesyntax):");
+            var sumAllOrdGer = from c in customers
+                               from o in c.Orders
+                               from p in product
+                               where p.ProductID == o.OrderID
+                               where o.ShipCountry == "Germany"
+                               select new { o, p };
+
+            double sum = 0;
+            foreach (var item in sumAllOrdGer)
+            {
+                sum += item.p.UnitPrice;
+            }
+            Console.WriteLine("Summe aller Bestellungen nach Deutschland (Abfragesyntax) = " + sum);
+
+
+
+
+
+
             Console.ReadKey();
         }
     }
